@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fotogram — Share your world</title>
+  <meta name="description" content="An Instagram-style photo social app built with pure vanilla JavaScript. Feed, stories, explore, likes and comments — all client-side." />
+  <meta property="og:title" content="Fotogram — Share your world" />
+  <meta property="og:description" content="An Instagram-style photo app built with pure vanilla JavaScript." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0e0e12" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%B7%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#feed-view">Skip to feed</a>
+
+  <!-- ============ TOP NAV ============ -->
+  <header class="topnav">
+    <div class="topnav-inner">
+      <a class="logo" href="#" id="logo-link">📸 Fotogram</a>
+
+      <nav class="nav-icons" aria-label="Main">
+        <button class="nav-icon is-active" id="nav-feed" type="button" aria-label="Feed" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        </button>
+        <button class="nav-icon" id="nav-explore" type="button" aria-label="Explore" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="m8.5 13.5 2-5 5-2-2 5z"/></svg>
+        </button>
+        <button class="nav-icon" id="nav-create" type="button" aria-label="Create post">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>
+        </button>
+        <button class="nav-icon" id="nav-activity" type="button" aria-label="Notifications" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10 21a2.2 2.2 0 0 0 4 0"/></svg>
+          <span id="activity-dot" class="dot" hidden></span>
+        </button>
+        <button class="nav-avatar" id="nav-profile" type="button" aria-label="Your profile">you</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============ FEED ============ -->
+    <section class="view" id="feed-view">
+      <div class="layout">
+        <div class="feed-col">
+          <!-- Stories -->
+          <div class="stories" role="list" aria-label="Stories"></div>
+
+          <!-- Composer -->
+          <form id="composer" class="composer" novalidate>
+            <span class="avatar me" aria-hidden="true">you</span>
+            <label class="sr-only" for="compose-text">Write a caption</label>
+            <input id="compose-text" type="text" placeholder="Share a moment…" maxlength="2200" autocomplete="off" />
+            <button class="btn-primary btn-sm" type="submit">Post</button>
+          </form>
+          <p id="compose-msg" class="compose-msg" role="alert" hidden></p>
+
+          <!-- Posts -->
+          <div id="feed" class="feed" aria-live="polite"></div>
+          <p id="feed-end" class="feed-end" hidden>You're all caught up ✨</p>
+        </div>
+
+        <!-- Suggestions sidebar -->
+        <aside class="side-col" aria-label="Suggestions">
+          <div class="side-me">
+            <span class="avatar me big">you</span>
+            <div><b>you</b><p>@you · fotogram demo</p></div>
+          </div>
+          <p class="side-title">Suggested for you</p>
+          <div id="suggestions"></div>
+          <p class="side-note">Built with vanilla JS — every like, comment and post is stored locally in your browser.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ EXPLORE ============ -->
+    <section class="view" id="explore-view" hidden>
+      <div class="wrap-narrow">
+        <h1 class="view-title">Explore</h1>
+        <div id="explore-grid" class="explore-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============ PROFILE ============ -->
+    <section class="view" id="profile-view" hidden>
+      <div class="wrap-narrow">
+        <div class="profile-head">
+          <span class="avatar me xl">you</span>
+          <div class="profile-meta">
+            <h1>you</h1>
+            <div class="profile-stats">
+              <span><b id="stat-posts">0</b> posts</span>
+              <span><b id="stat-likes">0</b> likes given</span>
+              <span><b id="stat-comments">0</b> comments</span>
+            </div>
+            <p class="profile-bio">📍 Building things on the internet<br>🔗 <a href="https://github.com/MuhammadAwais047" target="_blank" rel="noopener noreferrer">github.com/MuhammadAwais047</a></p>
+          </div>
+        </div>
+        <h2 class="grid-label">Your posts</h2>
+        <div id="profile-grid" class="explore-grid"></div>
+        <p id="profile-empty" class="feed-end" hidden>No posts yet — tap ✕… we mean the ＋ button to share your first photo.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ CREATE MODAL ============ -->
+  <div id="create-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="create-title" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card">
+      <h2 id="create-title">New post</h2>
+      <button class="modal-close" id="create-close" type="button" data-close aria-label="Close">✕</button>
+      <div class="create-preview-wrap">
+        <img id="create-preview" class="create-preview" alt="Selected photo preview" />
+        <button id="create-shuffle" class="btn-ghost btn-sm" type="button">🎲 Shuffle photo</button>
+      </div>
+      <label class="sr-only" for="create-caption">Caption</label>
+      <textarea id="create-caption" rows="2" placeholder="Write a caption…" maxlength="2200"></textarea>
+      <button id="create-share" class="btn-primary btn-block" type="button">Share</button>
+    </div>
+  </div>
+
+  <!-- ============ STORY VIEWER ============ -->
+  <div id="story-viewer" class="story-viewer" role="dialog" aria-modal="true" aria-label="Story" hidden>
+    <button id="story-close" class="story-close" type="button" aria-label="Close story">✕</button>
+    <div class="story-stage">
+      <div id="story-bars" class="story-bars"></div>
+      <img id="story-img" class="story-img" alt="Story photo" />
+      <p id="story-user" class="story-user"></p>
+      <button id="story-prev" class="story-nav prev" type="button" aria-label="Previous story">‹</button>
+      <button id="story-next" class="story-nav next" type="button" aria-label="Next story">›</button>
+    </div>
+  </div>
+
+  <!-- ============ ACTIVITY PANEL ============ -->
+  <div id="activity-panel" class="activity-panel" role="dialog" aria-label="Notifications" hidden>
+    <h2>Notifications</h2>
+    <div id="activity-list"></div>
+  </div>
+
+  <footer class="foot">
+    <p>Demo photos from <a href="https://picsum.photos" target="_blank" rel="noopener noreferrer">picsum.photos</a> · A vanilla-JS Instagram clone by
+      <a href="https://github.com/MuhammadAwais047" target="_blank" rel="noopener noreferrer">Muhammad Awais</a> ·
+      <a href="https://github.com/MuhammadAwais047/instagram-clone" target="_blank" rel="noopener noreferrer">Source</a></p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
