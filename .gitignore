@@ -1,3 +1,10 @@
 .DS_Store
 Thumbs.db
 *.log
+.env
+.env.*
+*.pem
+*.key
+
+# Secrets — never commit
+!.env.example
